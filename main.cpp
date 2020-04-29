@@ -7,7 +7,6 @@
 
 
 
-
 struct win32_offscreen_buffer {
 	// pixels are 32 bits
 	// memory order BB GG RR XX
@@ -25,8 +24,9 @@ struct win32_window_dimension {
 
 GLOBAL bool GlobalRunning = true;
 GLOBAL win32_offscreen_buffer GlobalBackBuffer;
+GLOBAL int Global_stripe_yOffset = 0;
 
-win32_window_dimension Win32GetWindowDimension(HWND Window) {
+INTERNAL win32_window_dimension Win32GetWindowDimension(HWND Window) {
 	win32_window_dimension dims;
 
 	RECT ClientRect;
@@ -43,17 +43,17 @@ INTERNAL void RenderStripes(win32_offscreen_buffer buffer) {
 	int height = buffer.Height;
 	int stripe_height = buffer.Height / 10;
 	int stripe_color = ((3 << 16) | (102 << 8) | 252);
-	int current_color = 0;
+	int current_color = stripe_color;
 
+	// NOTE: -9 through 9 will have the same color value, so when scrolling up
+	// 	 from the beginning there will be a large stripe here
 	uint32_t* pixel = (uint32_t*)buffer.Memory;
 	for (int row=0; row < height; ++row) {
-		if (row % stripe_height == 0) {
-			if (current_color == stripe_color) {
-				current_color = 0;
-			}
-			else {
-				current_color = stripe_color;
-			}
+		if (((row + Global_stripe_yOffset) / stripe_height) % 2 == 0) {
+			current_color = stripe_color;
+		}
+		else {
+			current_color = 0;
 		}
 
 		for (int p=0; p < width; ++p) {
@@ -88,12 +88,12 @@ INTERNAL void Win32ResizeDIBSection(win32_offscreen_buffer *buffer, int width, i
 
 INTERNAL void Win32DisplayBufferInWindow(HDC device_context, 
 					int window_width, int window_height,
-					win32_offscreen_buffer buffer) {
+					win32_offscreen_buffer* buffer) {
 	StretchDIBits(device_context,
 			0, 0, window_width, window_height,
-			0, 0, buffer.Width, buffer.Height,
-			buffer.Memory,
-			&buffer.Info,
+			0, 0, buffer->Width, buffer->Height,
+			buffer->Memory,
+			&buffer->Info,
 			DIB_RGB_COLORS, SRCCOPY);
 }
 
@@ -101,10 +101,6 @@ LRESULT CALLBACK WindowCallback(HWND window, UINT message, WPARAM wParam, LPARAM
 	LRESULT result = 0;
 	
 	switch (message) {
-		case WM_SIZE:
-		{
-		} break;
-
 		case WM_CLOSE:
 		{
 			GlobalRunning = false;
@@ -126,8 +122,40 @@ LRESULT CALLBACK WindowCallback(HWND window, UINT message, WPARAM wParam, LPARAM
 			win32_window_dimension dims = Win32GetWindowDimension(window);
 			Win32DisplayBufferInWindow(device_context, 
 						dims.Width, dims.Height,
-						GlobalBackBuffer);
+						&GlobalBackBuffer);
 			EndPaint(window, &paint);
+		} break;
+
+		case WM_SYSKEYDOWN:
+		case WM_SYSKEYUP:
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+		{
+			uint32_t vk_code = wParam;
+			bool is_down = (lParam & (1 << 31)) == 0;
+			if (is_down) {
+				switch (vk_code) {
+					case VK_UP:
+					{
+						Global_stripe_yOffset -= 10;
+					} break;
+
+					case VK_DOWN:
+					{
+						Global_stripe_yOffset += 10;
+					} break;
+
+					case VK_LEFT:
+					{
+						Global_stripe_yOffset -= 10;
+					} break;
+
+					case VK_RIGHT:
+					{
+						Global_stripe_yOffset += 10;
+					} break;
+				}
+			}
 		} break;
 
 		default:
@@ -179,7 +207,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, 
 				win32_window_dimension dims = Win32GetWindowDimension(Window);
 				Win32DisplayBufferInWindow(device_context, 
 							dims.Width, dims.Height,
-							GlobalBackBuffer);
+							&GlobalBackBuffer);
 			}
 		}
 		else {
