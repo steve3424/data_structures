@@ -35,7 +35,7 @@ struct win32_sound_output {
 	int16_t volume; 
 };
 
-GLOBAL bool GlobalRunning = true;
+GLOBAL bool GlobalRunning;
 GLOBAL win32_offscreen_buffer GlobalGraphicsBuffer;
 GLOBAL LPDIRECTSOUNDBUFFER GlobalSoundBuffer;
 GLOBAL int Global_stripe_yOffset = 0;
@@ -294,6 +294,10 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, 
 	WindowClass.hInstance = instance;
 	WindowClass.lpszClassName = "HandmadeHeroWindow";
 
+	LARGE_INTEGER perf_frequency;
+	QueryPerformanceFrequency(&perf_frequency);
+	int64_t counter_frequency = perf_frequency.QuadPart;
+
 	if (RegisterClassA(&WindowClass)) {
 		HWND Window = CreateWindowExA(0, 
 						WindowClass.lpszClassName, 
@@ -325,7 +329,12 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, 
 			GlobalSoundBuffer->Play(0, 0, DSBPLAY_LOOPING);
 
 			// ***** WINDOW LOOP *****
+			GlobalRunning = true;
+			LARGE_INTEGER last_counter;
+			QueryPerformanceCounter(&last_counter);
+			uint64_t last_cycle_counter = __rdtsc();
 			while (GlobalRunning) {
+
 				MSG message;
 				while(PeekMessage(&message, 0, 0, 0, PM_REMOVE)) {
 					if (message.message == WM_QUIT) {
@@ -361,6 +370,24 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, 
 				else {
 					// GetCurrentPosition() error
 				}
+
+				uint64_t end_cycle_counter = __rdtsc();
+				LARGE_INTEGER end_counter;
+				QueryPerformanceCounter(&end_counter);
+
+				uint64_t cycles_elapsed = end_cycle_counter - last_cycle_counter;
+				int64_t counter_elapsed = end_counter.QuadPart - last_counter.QuadPart;
+
+				int32_t ms_per_frame = (int32_t)((1000*counter_elapsed) / counter_frequency);
+				int32_t frames_per_sec = 1000 / ms_per_frame;
+				int32_t megacycles_per_frame = (int32_t)(cycles_elapsed/(1000*1000));
+
+				char buffer[256];
+				wsprintf(buffer, "%d ms/f, %d f/s, %d Mc/f\n", ms_per_frame, frames_per_sec, megacycles_per_frame);
+				OutputDebugStringA(buffer);
+
+				last_cycle_counter = end_cycle_counter;
+				last_counter = end_counter;
 			}
 		}
 		else {
