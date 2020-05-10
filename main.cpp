@@ -15,14 +15,14 @@ struct win32_offscreen_buffer {
 	// memory order BB GG RR XX
 	BITMAPINFO Info;
 	void* Memory;
-	int Width;
-	int Height;
-	int Pitch;
+	int width;
+	int height;
+	int pitch;
 };
 
 struct win32_window_dimension {
-	int Width;
-	int Height;
+	int width;
+	int height;
 };
 
 struct win32_sound_output {
@@ -151,17 +151,17 @@ INTERNAL win32_window_dimension Win32GetWindowDimension(HWND Window) {
 
 	RECT ClientRect;
 	GetClientRect(Window, &ClientRect);
-	dims.Width = ClientRect.right - ClientRect.left;
-	dims.Height = ClientRect.bottom - ClientRect.top;
+	dims.width = ClientRect.right - ClientRect.left;
+	dims.height = ClientRect.bottom - ClientRect.top;
 
 	return dims;
 }
 
 // write pixels as XX RR GG BB
 INTERNAL void RenderStripes(win32_offscreen_buffer buffer) {
-	int width = buffer.Width;
-	int height = buffer.Height;
-	int stripe_height = buffer.Height / 10;
+	int width = buffer.width;
+	int height = buffer.height;
+	int stripe_height = buffer.height / 10;
 	int stripe_color = ((3 << 16) | (102 << 8) | 252);
 	int current_color = stripe_color;
 
@@ -188,8 +188,8 @@ INTERNAL void Win32ResizeDIBSection(win32_offscreen_buffer *buffer, int width, i
 		VirtualFree(buffer->Memory, 0, MEM_RELEASE);
 	}
 
-	buffer->Width = width;
-	buffer->Height = height;
+	buffer->width = width;
+	buffer->height = height;
 	
 	// negative height tells windows to treat this buffer as top-down
 	// instead of bottom-up
@@ -203,7 +203,7 @@ INTERNAL void Win32ResizeDIBSection(win32_offscreen_buffer *buffer, int width, i
 	int bytes_per_pixel = 4;
 	int bitmap_memory_size = width * height * bytes_per_pixel;
 	buffer->Memory = VirtualAlloc(0, bitmap_memory_size, MEM_COMMIT, PAGE_READWRITE);
-	buffer->Pitch = width * bytes_per_pixel;
+	buffer->pitch = width * bytes_per_pixel;
 }
 
 INTERNAL void Win32DisplayBufferInWindow(HDC device_context, 
@@ -211,7 +211,7 @@ INTERNAL void Win32DisplayBufferInWindow(HDC device_context,
 					win32_offscreen_buffer* buffer) {
 	StretchDIBits(device_context,
 			0, 0, window_width, window_height,
-			0, 0, buffer->Width, buffer->Height,
+			0, 0, buffer->width, buffer->height,
 			buffer->Memory,
 			&buffer->Info,
 			DIB_RGB_COLORS, SRCCOPY);
@@ -241,7 +241,7 @@ LRESULT CALLBACK WindowCallback(HWND window, UINT message, WPARAM wParam, LPARAM
 			HDC device_context = BeginPaint(window, &paint);
 			win32_window_dimension dims = Win32GetWindowDimension(window);
 			Win32DisplayBufferInWindow(device_context, 
-						dims.Width, dims.Height,
+						dims.width, dims.height,
 						&GlobalGraphicsBuffer);
 			EndPaint(window, &paint);
 		} break;
@@ -348,7 +348,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, 
 				// write graphics buffer
 				RenderStripes(GlobalGraphicsBuffer);
 				win32_window_dimension dims = Win32GetWindowDimension(Window);
-				Win32DisplayBufferInWindow(device_context, dims.Width, dims.Height, &GlobalGraphicsBuffer);
+				Win32DisplayBufferInWindow(device_context, dims.width, dims.height, &GlobalGraphicsBuffer);
 
 				// write sound buffer
 				DWORD write_cursor;
