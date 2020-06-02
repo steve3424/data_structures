@@ -1,0 +1,3 @@
+-Platform / Game interaction
+	- Each platform layer is developed using the game code as a service
+	- Platform layer runs and calls into game code to get pixel/audio information to send to output
