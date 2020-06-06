@@ -1,7 +1,7 @@
 @echo off
 
 set CompilerFlags=-nologo -MT -Gm- -GR- -EHa- -Od -Oi -WX -W4 -wd4281 -wd4100 -wd4189 -wd4505 -DHANDMADE_INTERNAL=1 -DHANDMADE_SLOW=1 -DHANDMADE_WIN32=1 -FC -Z7 -Fm
-set LinkerFlags=-opt:ref  user32.lib gdi32.lib dsound.lib
+set LinkerFlags=-opt:ref  user32.lib gdi32.lib dsound.lib winmm.lib
 
 mkdir ..\build
 pushd ..\build
