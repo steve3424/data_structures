@@ -1,0 +1,5 @@
+- Hashing
+- Graph 
+- Stack
+- Linked list
+- Tries

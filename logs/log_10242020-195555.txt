@@ -1,0 +1,51 @@
+LOG FILE CREATED ON 10-24-2020---19:55:55
+CURRENT DIRECTORY: C:\dev\rocket_sim\build
+
+called 19:55:55
+Win32LoadGameCode() {
+	last write time low: 863699462
+	last write time high: 30845537
+	game code loaded
+}
+
+called 19:56:17
+Win32LoadGameCode() {
+	last write time low: 1128513941
+	last write time high: 30845537
+	game code loaded
+}
+
+called 19:56:17
+Win32LoadGameCode() {
+	last write time low: 1130438654
+	last write time high: 30845537
+	game code loaded
+}
+
+called 19:56:51
+Win32LoadGameCode() {
+	last write time low: 1472616841
+	last write time high: 30845537
+	game code loaded
+}
+
+called 19:56:51
+Win32LoadGameCode() {
+	last write time low: 1474661783
+	last write time high: 30845537
+	game code loaded
+}
+
+called 19:57:24
+Win32LoadGameCode() {
+	last write time low: 1807281238
+	last write time high: 30845537
+	game code loaded
+}
+
+called 19:57:25
+Win32LoadGameCode() {
+	last write time low: 1809375667
+	last write time high: 30845537
+	game code loaded
+}
