@@ -1,5 +1,0 @@
-LOG FILE CREATED ON 10-24-2020---18:18:33
-CURRENT DIRECTORY: C:\dev\rocket_sim\build
-
-called 18:18:34
-Win32LoadGameCode(source_dll_name, log_file)

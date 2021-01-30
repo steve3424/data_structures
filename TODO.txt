@@ -1,5 +1,16 @@
-- Hashing
-- Graph 
-- Stack
+-- Text drawing
+-- Menu
+
+- Hash Table
+- Dancing Links
+- Radix Sort
+- Quick Sort
+- Suffix tri
+- Graph
 - Linked list
-- Tries
+- Stack
+
+
+oasetnuhaosneuht
+
+aosenuthasonetuhosaetnuh

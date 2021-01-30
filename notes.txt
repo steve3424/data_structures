@@ -1,4 +1,0 @@
-Move all OpenGL stuff to platform layer and provide function pointers in platform_api. Game DLL should be self contained.
-	-Right now the platform layer and game code layer are nicely separated except for OpenGL calls. These are being called from both places so they both must be linked to OpenGL and Glew.
-	-If possible, I would like to get the OpenGL calls down to a few functions to pass in through the api. I have no idea if this is reasonable
-	-That way the game would take care of updating and all rendering would go through the platform layer

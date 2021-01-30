@@ -6,7 +6,6 @@
 #include <math.h>
 
 
-
 typedef struct Node {
 	int key;
 	int val;
@@ -245,7 +244,7 @@ Node* Predecessor(BinaryTree* bst, Node* node) {
 
 
 
-void Insert(BinaryTree* bst, Node* node) {
+void Insert(BinaryTree* bst, Node* node, bool rebalance) {
 	if(node == NULL) {
 		printf("Node argument NULL.\n");
 		return;
@@ -297,10 +296,12 @@ void Insert(BinaryTree* bst, Node* node) {
 		}
 	}
 
-	BalanceTree(bst);
+	if(rebalance) {
+		BalanceTree(bst);
+	}
 }
 
-void Delete(BinaryTree* bst, Node* node) {
+void Delete(BinaryTree* bst, Node* node, bool rebalance) {
 	if(node == NULL) {
 		printf("Node argument NULL.\n");
 		return;
@@ -318,7 +319,7 @@ void Delete(BinaryTree* bst, Node* node) {
 	if (node->left == NULL && node->right == NULL) {
 		// unlink parent
 		if (node->parent) {
-			if (node->parent->left == node) {
+			if (node == node->parent->left) {
 				node->parent->left = NULL;
 			}
 			else {
@@ -340,13 +341,20 @@ void Delete(BinaryTree* bst, Node* node) {
 		node->key = temp->key;
 		node->val = temp->val;
 		
-		// successor node has no right link
+		// successor node has no left child
 		// successor's parent should link to successors right node
+		Node* successor_right_node = temp->right;
 		if(temp == temp->parent->left) {
-			temp->parent->left = temp->right;
+			temp->parent->left = successor_right_node;
+			if(successor_right_node) {
+				successor_right_node->parent = temp->parent;
+			}
 		}
 		else {
-			temp->parent->right = temp->right;
+			temp->parent->right = successor_right_node;
+			if(successor_right_node) {
+				successor_right_node->parent = temp->parent;
+			}
 		}
 
 		// delete successor node
@@ -361,6 +369,14 @@ void Delete(BinaryTree* bst, Node* node) {
 		node->left = temp->left;
 		node->right = temp->right;
 
+		// set parent of left and right of temp node
+		if(temp->left) {
+			temp->left->parent = node;
+		}
+		if(temp->right) {
+			temp->right->parent = node;
+		}
+
 		bst->size--;
 		free(temp);
 	}
@@ -372,11 +388,21 @@ void Delete(BinaryTree* bst, Node* node) {
 		node->left = temp->left;
 		node->right = temp->right;
 
+		// set parent of left and right of temp node
+		if(temp->left) {
+			temp->left->parent = node;
+		}
+		if(temp->right) {
+			temp->right->parent = node;
+		}
+
 		bst->size--;
 		free(temp);	
 	}
 
-	BalanceTree(bst);
+	if(rebalance) {
+		BalanceTree(bst);
+	}
 }
 
 #endif

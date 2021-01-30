@@ -42,12 +42,12 @@ INTERNAL GameObject LoadObject(float* vertices, unsigned int* indices, unsigned 
 }
 
 INTERNAL unsigned int LoadShaderProgram(char* vert_file, char* frag_file) {
-	DEBUG_ReadFileResult vert = DEBUG_Win32ReadEntireFile(vert_file);
-	DEBUG_ReadFileResult frag = DEBUG_Win32ReadEntireFile(frag_file);
+	Win32FileResult vert = Win32ReadEntireFile(vert_file);
+	Win32FileResult frag = Win32ReadEntireFile(frag_file);
 
 	unsigned int vertex_shader = glCreateShader(GL_VERTEX_SHADER);
 	unsigned int fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(vertex_shader, 1, &(const char*)vert.contents, NULL);
+	glShaderSource(vertex_shader, 1, &(const char*)vert.file, NULL);
 	glCompileShader(vertex_shader);
 	int success;
 	char log[512];
@@ -55,7 +55,7 @@ INTERNAL unsigned int LoadShaderProgram(char* vert_file, char* frag_file) {
 	if(!success) {
 		glGetShaderInfoLog(vertex_shader, 512, NULL, log);
 	}
-	glShaderSource(fragment_shader, 1, &(const char*)frag.contents, NULL);
+	glShaderSource(fragment_shader, 1, &(const char*)frag.file, NULL);
 	glCompileShader(fragment_shader);
 	glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
 	if(!success) {
@@ -67,8 +67,8 @@ INTERNAL unsigned int LoadShaderProgram(char* vert_file, char* frag_file) {
 	glAttachShader(shader_program, fragment_shader);
 	glLinkProgram(shader_program);
 
-	DEBUG_Win32FreeFileMemory(vert.contents);
-	DEBUG_Win32FreeFileMemory(frag.contents);
+	Win32FreeFileResult(&vert);
+	Win32FreeFileResult(&frag);
 
 	return shader_program;
 }
@@ -235,8 +235,8 @@ INTERNAL void LoadDigits(GameState* game_state) {
 		}
 	}
 
-	char* vert_path = "..\\zshaders\\box.vert";
-	char* frag_path = "..\\zshaders\\box.frag";
+	char* vert_path = "..\\zshaders\\generic.vert";
+	char* frag_path = "..\\zshaders\\generic.frag";
 	game_state->shader = LoadShaderProgram(vert_path, frag_path);
 
 	glBindVertexArray(0);
@@ -305,8 +305,8 @@ INTERNAL void LoadArrow(GameState* game_state) {
 }
 
 INTERNAL void LoadQueueData(GameState* game_state) {
-	char* vert_path = "..\\zshaders\\box.vert";
-	char* frag_path = "..\\zshaders\\box.frag";
+	char* vert_path = "..\\zshaders\\generic.vert";
+	char* frag_path = "..\\zshaders\\generic.frag";
 	game_state->shader = LoadShaderProgram(vert_path, frag_path);
 	LoadDigits(game_state);
 	LoadNode(game_state);
@@ -314,12 +314,20 @@ INTERNAL void LoadQueueData(GameState* game_state) {
 }
 
 INTERNAL void LoadBSTData(GameState* game_state) {
-	char* vert_path = "..\\zshaders\\box.vert";
-	char* frag_path = "..\\zshaders\\box.frag";
+	char* vert_path = "..\\zshaders\\generic.vert";
+	char* frag_path = "..\\zshaders\\generic.frag";
 	game_state->shader = LoadShaderProgram(vert_path, frag_path);
 	LoadDigits(game_state);
 	LoadNode(game_state);
 	LoadLineSegment(game_state);
+}
+
+INTERNAL void LoadArrayData(GameState* game_state) {
+	char* vert_path = "..\\zshaders\\generic.vert";
+	char* frag_path = "..\\zshaders\\generic.frag";
+	game_state->shader = LoadShaderProgram(vert_path, frag_path);
+	LoadDigits(game_state);
+	LoadNode(game_state);
 }
 
 /*
