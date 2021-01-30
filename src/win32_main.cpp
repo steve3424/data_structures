@@ -145,7 +145,6 @@ INTERNAL void Win32ProcessPendingMessages(GameInput* new_input) {
 				if(is_down != was_down) {
 					switch (vk_code) {
 						// CASES ARE FOR DVORAK LAYOUT
-
 						case 'P':
 						{
 							Win32ProcessKeyboardMessage(&new_input->p, is_down, was_down);
@@ -177,6 +176,11 @@ INTERNAL void Win32ProcessPendingMessages(GameInput* new_input) {
 							Win32ProcessKeyboardMessage(&new_input->e, is_down, was_down);
 						} break;
 
+						case 'W':
+						{
+							Win32ProcessKeyboardMessage(&new_input->w, is_down, was_down);
+						} break;
+
 						case VK_UP:
 						{
 							Win32ProcessKeyboardMessage(&new_input->arrow_up, is_down, was_down);
@@ -206,7 +210,6 @@ INTERNAL void Win32ProcessPendingMessages(GameInput* new_input) {
 						{
 						} break;
 					}
-
 				}
 
 				bool alt_key_was_down = (message.lParam & (1 << 29));
@@ -384,39 +387,43 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, 
 			
 				GameInput new_input = {};
 				GameState* game_state = (GameState*)game_memory.storage;
+				game_state->selected_visualization = 0;
+				game_state->num_visualizations = 3;
 
 				srand((unsigned int)time(NULL));
 
+				LoadAllData(game_state);
+
 				// BINARY TREE INIT
 				//LoadBSTData(game_state);
-				//const int tree_size = 20;
-				//Node** nodes = (Node**)malloc(sizeof(Node*) * tree_size);
-				//for(int i = 0; i < tree_size; ++i) {
-				//	nodes[i] = AllocateNode(i, i);
-				//}
-				//BinaryTree bst = InitBinaryTree(nodes, tree_size);
-				//game_state->data_structure = &bst;
-				//free(nodes);
+				const int tree_size = 20;
+				Node** nodes = (Node**)malloc(sizeof(Node*) * tree_size);
+				for(int i = 0; i < tree_size; ++i) {
+					nodes[i] = AllocateNode(i, i);
+				}
+				BinaryTree bst = InitBinaryTree(nodes, tree_size);
+				game_state->data_structure[0] = &bst;
+				free(nodes);
 
 				// QUEUE INIT
-				LoadQueueData(game_state);
+				//LoadQueueData(game_state);
 				QueueInt q = CreateQueueInt(10);
-				game_state->data_structure = &q;
+				game_state->data_structure[1] = &q;
 
 				// ARRAY INIT
 				//LoadArrayData(game_state);
-				//ArrayStruct a = {};
-				//a.size = 10;
-				//a.array = (int*)malloc(sizeof(int) * a.size);
-				//if(a.array) {
-				//	for(int i = 0; i < a.size; ++i) {
-				//		a.array[i] = rand() % MAX_DIGITS;
-				//	}
-				//}
-				//a.state = STATIC;
-				//a.selected_value_index = -1;
-				//a.compare_value_index = -1;
-				//game_state->data_structure = &a;
+				ArrayStruct a = {};
+				a.size = 10;
+				a.array = (int*)malloc(sizeof(int) * a.size);
+				if(a.array) {
+					for(int i = 0; i < a.size; ++i) {
+						a.array[i] = rand() % MAX_DIGITS;
+					}
+				}
+				a.state = STATIC;
+				a.selected_value_index = -1;
+				a.compare_value_index = -1;
+				game_state->data_structure[2] = &a;
 
 
 				// ***** MAIN LOOP *****

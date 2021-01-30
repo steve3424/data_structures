@@ -304,6 +304,16 @@ INTERNAL void LoadArrow(GameState* game_state) {
 	glBindVertexArray(0);
 }
 
+INTERNAL void LoadAllData(GameState* game_state) {
+	char* vert_path = "..\\zshaders\\generic.vert";
+	char* frag_path = "..\\zshaders\\generic.frag";
+	game_state->shader = LoadShaderProgram(vert_path, frag_path);
+	LoadDigits(game_state);
+	LoadNode(game_state);
+	LoadArrow(game_state);
+	LoadLineSegment(game_state);
+}
+
 INTERNAL void LoadQueueData(GameState* game_state) {
 	char* vert_path = "..\\zshaders\\generic.vert";
 	char* frag_path = "..\\zshaders\\generic.frag";

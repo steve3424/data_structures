@@ -489,38 +489,51 @@ INTERNAL inline void UpdateCamera(GameState* game_state, GameInput* input) {
 }
 
 
+INTERNAL void UpdateSelectedVisualization(GameState* game_state, GameInput* input) {
+	if(input->w.is_down) {
+		game_state->selected_visualization++;
+		game_state->selected_visualization %= game_state->num_visualizations;
+	}
+}
+
 INTERNAL void GameUpdateAndRender(GameMemory* memory, GameInput* input) {
 	GameState* game_state = (GameState*)memory->storage;
 	
 	UpdateCamera(game_state, input);
+	UpdateSelectedVisualization(game_state, input);
 
-	// BINARY TREE
-	//BinaryTree* bst = (BinaryTree*)game_state->data_structure;
-	//if(!game_state->initialized) {
-	//	game_state->camera_z = -5.0f;
-	//	game_state->selected_node = bst->head;
-	//	game_state->initialized = true;
-	//}
-	//ProcessBSTInput(game_state, input, bst);	
-	//DrawBST(game_state, input, bst);
+	switch(game_state->selected_visualization) {
+		case 0: {
+			BinaryTree* bst = (BinaryTree*)game_state->data_structure[0];
+			if(!game_state->initialized) {
+				game_state->camera_z = -5.0f;
+				game_state->selected_node = bst->head;
+				game_state->initialized = true;
+			}
+			ProcessBSTInput(game_state, input, bst);	
+			DrawBST(game_state, input, bst);
+		} break;
 
-	// QUEUE
-	QueueInt* q = (QueueInt*)game_state->data_structure;
-	if(!game_state->initialized) {
-		game_state->camera_x = ((float)q->capacity / -2.0f) + 0.5f;
-		game_state->camera_z = -5.0f;
-		game_state->initialized = true;
+		case 1: {
+			QueueInt* q = (QueueInt*)game_state->data_structure[1];
+			if(!game_state->initialized) {
+				game_state->camera_x = ((float)q->capacity / -2.0f) + 0.5f;
+				game_state->camera_z = -5.0f;
+				game_state->initialized = true;
+			}
+			ProcessQueueInput(input, q);
+			DrawQueue(game_state, input, q);
+		} break;
+
+		case 2: {
+			ArrayStruct* a = (ArrayStruct*)game_state->data_structure[2];
+			if(!game_state->initialized) {
+				game_state->camera_x = ((float)a->size / -2.0f) + 0.5f;
+				game_state->camera_z = -5.0f;
+				game_state->initialized = true;
+			}
+			UpdateArrayState(input, a);
+			DrawArray(game_state, a);
+		} break;
 	}
-	ProcessQueueInput(input, q);
-	DrawQueue(game_state, input, q);
-
-	// ARRAY
-	//ArrayStruct* a = (ArrayStruct*)game_state->data_structure;
-	//if(!game_state->initialized) {
-	//	game_state->camera_x = ((float)a->size / -2.0f) + 0.5f;
-	//	game_state->camera_z = -5.0f;
-	//	game_state->initialized = true;
-	//}
-	//UpdateArrayState(input, a);
-	//DrawArray(game_state, a);
 }

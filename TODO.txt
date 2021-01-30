@@ -10,7 +10,7 @@
 - Linked list
 - Stack
 
-
-oasetnuhaosneuht
-
-aosenuthasonetuhosaetnuh
+- In engine.h I should make GameState.data_structures void** to make it dynamic. Right now it is hardcoded at 3.
+- I would like the indices into GameState.data_structures to be an enum, but I don't think I can directly increment an enum variable. I could put them into an array or something.
+- Be able to move back and forth. Right now it only moves one way.
+- Make separate camera for each data structure. Right now there is one global camera so if you update it on one view it will be updated for the others.

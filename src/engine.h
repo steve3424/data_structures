@@ -30,7 +30,6 @@
 #define GLCall(function) function
 #endif
 
-
 struct GameButtonState {
 	bool is_down;
 	int repeat_count;
@@ -38,9 +37,9 @@ struct GameButtonState {
 
 // buttons are for DVORAK layout right now
 struct GameInput {
-	int num_buttons = 10;
+	int num_buttons = 11;
 	union {
-		GameButtonState buttons[10];
+		GameButtonState buttons[11];
 		struct {
 			GameButtonState comma;
 			GameButtonState a;
@@ -48,6 +47,7 @@ struct GameInput {
 			GameButtonState e;
 			GameButtonState s;
 			GameButtonState p;
+			GameButtonState w;
 			GameButtonState arrow_up;
 			GameButtonState arrow_down;
 			GameButtonState arrow_left;
@@ -81,7 +81,9 @@ struct GameState {
 	float camera_y;
 	float camera_z;
 
-	void* data_structure;
+	int num_visualizations;
+	int selected_visualization;
+	void* data_structure[3];
 	Node* selected_node;
 
 };
