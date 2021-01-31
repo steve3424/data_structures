@@ -12,8 +12,9 @@
 #include "..\\include\\glm\\gtc\\matrix_transform.hpp"
 #include "..\\include\\glm\\gtc\\type_ptr.hpp"
 
-#include "engine.cpp"
 #include "opengl.cpp"
+#include "navigation.cpp"
+#include "engine.cpp"
 
 #define WORKING_DIRECTORY "C:\\dev\\data_structures\\build"
 
@@ -487,12 +488,11 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, 
 
 					char string_buffer[256];
 					_snprintf_s(string_buffer, sizeof(string_buffer), "%.02f ms/f\n", ms_per_frame);
-					//OutputDebugStringA(string_buffer);
+					OutputDebugStringA(string_buffer);
 
 					uint64_t end_cycle_counter = __rdtsc();
 					uint64_t cycles_elapsed = end_cycle_counter - last_cycle_counter;
 					last_cycle_counter = end_cycle_counter;
-
 				}
 			}
 			else {

@@ -76,6 +76,12 @@ struct GameObject {
 	int num_indices;
 };
 
+struct GameCamera {
+	float x;
+	float y;
+	float z;
+};
+
 struct GameState {
 	bool initialized;
 
@@ -87,9 +93,7 @@ struct GameState {
 
 	int window_width;
 	int window_height;
-	float camera_x;
-	float camera_y;
-	float camera_z;
+	GameCamera cameras[3];
 
 	View current_view;
 	void* data_structure[3];
