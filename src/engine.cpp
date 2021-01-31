@@ -287,13 +287,14 @@ INTERNAL void DrawBST(const GameState* game_state, const GameInput* input, const
 	nodes[0] = b->head;
 
 	// MANAGE THE SPACING AND DRAWING OF NODES
-	// calculate the power of 2 necessary to represent the number of nodes in the tree
-	// start num_levels at 1 instead of 0 because we want the number of levels starting from 0, not the power
-	int num_levels = 1;
-	float size = (float)b->size;
-	while(size >= 2.0f) {
-		num_levels += 1;
-		size /= 2.0f;
+	// -find position of highest bit in b->size starting from 1
+	// -this is the number of levels in the tree we need to represent all of
+	// the nodes
+	int num_levels = 0;
+	int size = b->size;
+	while(size != 0) {
+		size = size >> 1;
+		++num_levels;
 	}
 
 	// calculate the maximum number of nodes at the bottom level of the tree
@@ -506,7 +507,7 @@ INTERNAL void GameUpdateAndRender(GameMemory* memory, GameInput* input) {
 		case 0: {
 			BinaryTree* bst = (BinaryTree*)game_state->data_structure[0];
 			if(!game_state->initialized) {
-				game_state->camera_z = -5.0f;
+				game_state->camera_z = -10.0f;
 				game_state->selected_node = bst->head;
 				game_state->initialized = true;
 			}
