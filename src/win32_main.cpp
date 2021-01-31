@@ -16,7 +16,6 @@
 #include "navigation.cpp"
 #include "engine.cpp"
 
-#define WORKING_DIRECTORY "C:\\dev\\data_structures\\build"
 
 GLOBAL bool global_running;
 GLOBAL int64_t global_counter_frequency;
@@ -336,8 +335,6 @@ INTERNAL bool Win32InitOpenGL(HDC window_dc) {
 
 int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int cmdShow) {
 
-	SetCurrentDirectory(WORKING_DIRECTORY);
-	
 	LARGE_INTEGER perf_frequency;
 	QueryPerformanceFrequency(&perf_frequency);
 	global_counter_frequency = perf_frequency.QuadPart;
