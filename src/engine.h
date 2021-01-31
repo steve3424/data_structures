@@ -30,6 +30,14 @@
 #define GLCall(function) function
 #endif
 
+
+typedef enum {
+	BINARY_TREE,
+	QUEUE,
+	INSERTION_SORT,
+	NUM_VIEWS // THIS NEEDS TO BE THE LAST ENUM IN THE LIST
+} View;
+
 struct GameButtonState {
 	bool is_down;
 	int repeat_count;
@@ -37,9 +45,9 @@ struct GameButtonState {
 
 // buttons are for DVORAK layout right now
 struct GameInput {
-	int num_buttons = 11;
+	int num_buttons = 12;
 	union {
-		GameButtonState buttons[11];
+		GameButtonState buttons[12];
 		struct {
 			GameButtonState comma;
 			GameButtonState a;
@@ -48,6 +56,8 @@ struct GameInput {
 			GameButtonState s;
 			GameButtonState p;
 			GameButtonState w;
+			GameButtonState v;
+
 			GameButtonState arrow_up;
 			GameButtonState arrow_down;
 			GameButtonState arrow_left;
@@ -81,14 +91,11 @@ struct GameState {
 	float camera_y;
 	float camera_z;
 
-	int num_visualizations;
-	int selected_visualization;
+	View current_view;
 	void* data_structure[3];
 	Node* selected_node;
-
 };
 
-INTERNAL void GameUpdateAndRender(GameMemory* memory, GameInput* input);
 
 #define ENGINE_H
 #endif

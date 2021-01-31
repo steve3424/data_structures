@@ -181,6 +181,11 @@ INTERNAL void Win32ProcessPendingMessages(GameInput* new_input) {
 							Win32ProcessKeyboardMessage(&new_input->w, is_down, was_down);
 						} break;
 
+						case 'V':
+						{
+							Win32ProcessKeyboardMessage(&new_input->v, is_down, was_down);
+						} break;
+
 						case VK_UP:
 						{
 							Win32ProcessKeyboardMessage(&new_input->arrow_up, is_down, was_down);
@@ -387,28 +392,25 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, 
 			
 				GameInput new_input = {};
 				GameState* game_state = (GameState*)game_memory.storage;
-				game_state->selected_visualization = 0;
-				game_state->num_visualizations = 3;
+				game_state->current_view = BINARY_TREE;
 
 				srand((unsigned int)time(NULL));
-
 				LoadAllData(game_state);
 
 				// BINARY TREE INIT
-				//LoadBSTData(game_state);
 				const int tree_size = 20;
 				Node** nodes = (Node**)malloc(sizeof(Node*) * tree_size);
 				for(int i = 0; i < tree_size; ++i) {
 					nodes[i] = AllocateNode(i, i);
 				}
 				BinaryTree bst = InitBinaryTree(nodes, tree_size);
-				game_state->data_structure[0] = &bst;
+				game_state->data_structure[BINARY_TREE] = &bst;
 				free(nodes);
 
 				// QUEUE INIT
 				//LoadQueueData(game_state);
 				QueueInt q = CreateQueueInt(10);
-				game_state->data_structure[1] = &q;
+				game_state->data_structure[QUEUE] = &q;
 
 				// ARRAY INIT
 				//LoadArrayData(game_state);
@@ -423,7 +425,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, 
 				a.state = STATIC;
 				a.selected_value_index = -1;
 				a.compare_value_index = -1;
-				game_state->data_structure[2] = &a;
+				game_state->data_structure[INSERTION_SORT] = &a;
 
 
 				// ***** MAIN LOOP *****

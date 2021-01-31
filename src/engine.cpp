@@ -5,6 +5,8 @@
 #include "array.h"
 #include "time.h"
 
+#include "navigation.cpp"
+
 #define MAX_DIGITS 100
 
 INTERNAL void UpdateArrayState(const GameInput* input, ArrayStruct* a) {
@@ -358,6 +360,12 @@ INTERNAL void DrawBST(const GameState* game_state, const GameInput* input, const
 				line_model = glm::scale(identity, glm::vec3(line_scale, line_scale, line_scale));
 				line_model = glm::translate(line_model, glm::vec3(current_x_location/line_scale, (-y_spacing * level)/line_scale + (node_width / 2.0f) / line_scale, -0.5f/line_scale));
 				line_model = glm::rotate(line_model, angle_in_radians * angle_flip, glm::vec3(0.0f, 0.0f, 1.0f));
+				if(b->size < 100) {
+					glUniform4f(color_location, 1.0f, 1.0f, 0.0f, 1.0f);
+				}
+				else {
+					glUniform4f(color_location, 1.0f, 0.0f, 0.0f, 1.0f);
+				}
 				glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(line_model));
 				glBindVertexArray(game_state->line.vao);
 				glDrawElements(GL_LINES, game_state->line.num_indices, GL_UNSIGNED_INT, (void*)0);
@@ -469,43 +477,35 @@ INTERNAL void DrawQueue(GameState* game_state, GameInput* input, QueueInt* q) {
 
 INTERNAL inline void UpdateCamera(GameState* game_state, GameInput* input) {
 	if(input->arrow_right.is_down) {
-		game_state->camera_x -= 0.05f;
+		game_state->camera_x -= 0.10f;
 	}
 	if(input->arrow_left.is_down) {
-		game_state->camera_x += 0.05f;
+		game_state->camera_x += 0.10f;
 	}
 	if(input->arrow_up.is_down) {
-		game_state->camera_y -= 0.05f;
+		game_state->camera_y -= 0.10f;
 	}
 	if(input->arrow_down.is_down) {
-		game_state->camera_y += 0.05f;
+		game_state->camera_y += 0.10f;
 	}
 	if(input->comma.is_down) {
-		game_state->camera_z += 0.05f;
+		game_state->camera_z += 0.10f;
 	}
 	if(input->o.is_down) {
-		game_state->camera_z -= 0.05f;
-	}
-
-}
-
-
-INTERNAL void UpdateSelectedVisualization(GameState* game_state, GameInput* input) {
-	if(input->w.is_down) {
-		game_state->selected_visualization++;
-		game_state->selected_visualization %= game_state->num_visualizations;
+		game_state->camera_z -= 0.10f;
 	}
 }
+
 
 INTERNAL void GameUpdateAndRender(GameMemory* memory, GameInput* input) {
 	GameState* game_state = (GameState*)memory->storage;
 	
 	UpdateCamera(game_state, input);
-	UpdateSelectedVisualization(game_state, input);
-
-	switch(game_state->selected_visualization) {
-		case 0: {
-			BinaryTree* bst = (BinaryTree*)game_state->data_structure[0];
+	UpdateView(&game_state->current_view, input);
+	
+	switch(game_state->current_view) {
+		case BINARY_TREE: {
+			BinaryTree* bst = (BinaryTree*)game_state->data_structure[BINARY_TREE];
 			if(!game_state->initialized) {
 				game_state->camera_z = -10.0f;
 				game_state->selected_node = bst->head;
@@ -515,8 +515,8 @@ INTERNAL void GameUpdateAndRender(GameMemory* memory, GameInput* input) {
 			DrawBST(game_state, input, bst);
 		} break;
 
-		case 1: {
-			QueueInt* q = (QueueInt*)game_state->data_structure[1];
+		case QUEUE: {
+			QueueInt* q = (QueueInt*)game_state->data_structure[QUEUE];
 			if(!game_state->initialized) {
 				game_state->camera_x = ((float)q->capacity / -2.0f) + 0.5f;
 				game_state->camera_z = -5.0f;
@@ -526,8 +526,8 @@ INTERNAL void GameUpdateAndRender(GameMemory* memory, GameInput* input) {
 			DrawQueue(game_state, input, q);
 		} break;
 
-		case 2: {
-			ArrayStruct* a = (ArrayStruct*)game_state->data_structure[2];
+		case INSERTION_SORT: {
+			ArrayStruct* a = (ArrayStruct*)game_state->data_structure[INSERTION_SORT];
 			if(!game_state->initialized) {
 				game_state->camera_x = ((float)a->size / -2.0f) + 0.5f;
 				game_state->camera_z = -5.0f;
