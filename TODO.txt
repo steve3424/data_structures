@@ -14,3 +14,5 @@
 - Should I initialize data structures in platform layer or in engine layer?
 - What is the best way to initialize the cameras?
 - Right now cameras are in separate list. Should I keep each camera with each data structure?
+- Insertion sort draw uses identity matrix and translates that for each node. The other 
+  drawing functions actually transform the model matrices. Which one is better?
