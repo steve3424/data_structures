@@ -32,10 +32,12 @@ The main idea is that there are 2 layers: platform layer and game layer:
 
 
 # TO USE
-Right now I only have visualizations for a queue, binary tree, and insertion sort. They are all loaded into the GameState.data_structures[] struct found in engine.h before the main loop. You can switch between them using the 'w' key. The camera is still global so if you move it around in one view it will move for the others.
+Right now I only have visualizations for a queue, binary tree, and insertion sort. They are all loaded into the GameState.data_structures[] struct found in engine.h before the main loop. The camera is still global so if you move it around in one view it will move for the others.
+
+##### Navigation
+- 'w'/'v' keys move through views
 
 ##### Camera
-- Only supports dvorak layout :(
 - ',' zooms in
 - 's' zooms out
 - left/right/up/down moves camera along x/y axis
@@ -45,7 +47,7 @@ Right now I only have visualizations for a queue, binary tree, and insertion sor
 - 'e' deletes selected element
 - 'p' goes to previous node
 - 's' goes to next node
--
+
 ##### Queue
 - 'a' adds element
 - 'e' deletes element
