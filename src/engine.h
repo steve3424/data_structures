@@ -83,7 +83,6 @@ struct GameCamera {
 };
 
 struct GameState {
-	bool initialized;
 
 	GameObject digits[100];
 	GameObject node;

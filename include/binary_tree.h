@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
 
 
 typedef struct Node {
@@ -15,6 +16,7 @@ typedef struct Node {
 } Node;
 
 typedef struct BinaryTree {
+	bool initialized;
 	Node* head;
 	unsigned int size;
 } BinaryTree;

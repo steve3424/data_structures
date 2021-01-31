@@ -409,12 +409,10 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, 
 				free(nodes);
 
 				// QUEUE INIT
-				//LoadQueueData(game_state);
 				QueueInt q = CreateQueueInt(10);
 				game_state->data_structure[QUEUE] = &q;
 
 				// ARRAY INIT
-				//LoadArrayData(game_state);
 				ArrayStruct a = {};
 				a.size = 10;
 				a.array = (int*)malloc(sizeof(int) * a.size);

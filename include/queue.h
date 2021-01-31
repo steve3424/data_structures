@@ -1,4 +1,6 @@
 #ifndef QUEUE_H
+#define QUEUE_H
+
 #include <stdbool.h>
 /*
 * Circular queue.
@@ -8,6 +10,7 @@
 */
 
 typedef struct QueueInt {
+	bool initialized;
 	int capacity;
 	int size;
 	int front;
@@ -21,7 +24,7 @@ QueueInt CreateQueueInt(int capacity) {
 		capacity = 10;
 	}
 
-	QueueInt q;
+	QueueInt q = {};
 	q.capacity = capacity;
 	q.size = 0;
 	q.front = 0;
@@ -279,5 +282,4 @@ INTERNAL bool IndexIsInQueue(QueueInt* q, int i) {
 	}
 }
 
-#define QUEUE_H
 #endif

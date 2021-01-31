@@ -1,6 +1,8 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
+#include <stdbool.h>
+
 enum ARRAY_STATE {
 	STATIC,
 	SORTING,
@@ -12,6 +14,7 @@ enum ARRAY_STATE {
 
 typedef struct ArrayStruct {
 	ARRAY_STATE state;
+	bool initialized;
 	
 	int selected_value_index;
 	int compare_value_index;

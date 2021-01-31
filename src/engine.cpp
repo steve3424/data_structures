@@ -39,7 +39,6 @@ INTERNAL inline void ProcessBSTInput(GameState* game_state, const GameInput* inp
 			if(bst->size == 1) {
 				game_state->selected_node = bst->head;
 			}
-
 		}
 	}
 }
@@ -195,7 +194,7 @@ INTERNAL inline void ProcessQueueInput(const GameInput* input, QueueInt* q) {
 	}
 }
 
-INTERNAL void DrawQueue(GameState* game_state, GameInput* input, QueueInt* q) {
+INTERNAL void DrawQueue(GameState* game_state, QueueInt* q) {
 	int color_location = glGetUniformLocation(game_state->shader, "color");
 	int model_location = glGetUniformLocation(game_state->shader, "model");
 	int view_location = glGetUniformLocation(game_state->shader, "view");
@@ -507,10 +506,10 @@ INTERNAL void GameUpdateAndRender(GameMemory* memory, GameInput* input) {
 	switch(game_state->current_view) {
 		case BINARY_TREE: {
 			BinaryTree* bst = (BinaryTree*)game_state->data_structure[game_state->current_view];
-			if(!game_state->initialized) {
+			if(!bst->initialized) {
 				game_state->cameras[game_state->current_view].z = -10.0f;
 				game_state->selected_node = bst->head;
-				game_state->initialized = true;
+				bst->initialized = true;
 			}
 			ProcessBSTInput(game_state, input, bst);	
 			DrawBST(game_state, input, bst);
@@ -518,21 +517,21 @@ INTERNAL void GameUpdateAndRender(GameMemory* memory, GameInput* input) {
 
 		case QUEUE: {
 			QueueInt* q = (QueueInt*)game_state->data_structure[game_state->current_view];
-			if(!game_state->initialized) {
+			if(!q->initialized) {
 				game_state->cameras[game_state->current_view].x = ((float)q->capacity / -2.0f) + 0.5f;
 				game_state->cameras[game_state->current_view].z = -5.0f;
-				game_state->initialized = true;
+				q->initialized = true;
 			}
 			ProcessQueueInput(input, q);
-			DrawQueue(game_state, input, q);
+			DrawQueue(game_state, q);
 		} break;
 
 		case INSERTION_SORT: {
 			ArrayStruct* a = (ArrayStruct*)game_state->data_structure[game_state->current_view];
-			if(!game_state->initialized) {
+			if(!a->initialized) {
 				game_state->cameras[game_state->current_view].x = ((float)a->size / -2.0f) + 0.5f;
 				game_state->cameras[game_state->current_view].z = -5.0f;
-				game_state->initialized = true;
+				a->initialized = true;
 			}
 			UpdateArrayState(input, a);
 			DrawArray(game_state, a);
